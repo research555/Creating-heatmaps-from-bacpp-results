@@ -4,22 +4,31 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import re
 from functions import *
+from tkinter import Tk, simpledialog
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+from exceptions import UserExit
+from GUI import GUI2
+
 
 if __name__ == '__main__':
-    with open("C:/Users/imran/documents/direct_to_file.txt", 'r') as rf:  # Open txt file from BacPP
-        f_contents = rf.readlines()  # Generate list from contents of file
-        final_str = TxtToStr(f_contents)  # format contents into string
-        x = final_str.split(',')
-        x = list(filter(None, x))  # remake formatted list
+    open_txt, save_csv, save_heatmap, name_range, sequence_range, number_seq = GUI2()
+    try:
+        if number_seq is None:
+            raise UserExit
+        elif number_seq == 1:
+            with open(open_txt, 'r') as rf:  # Open txt file from BacPP
+                heatmap, fig = SingleSequence(rf=rf, save_csv=save_csv)
+                fig.savefig(save_heatmap + '.png')
+                plt.show()  # shows the heatmap
+        elif number_seq > 1:
 
-        csv_ready_dict = GenerateCSV(x=x)  # produce CSV from the formatted list
 
-        df = pd.DataFrame(csv_ready_dict, columns=['position', 'nt', 's24', 's28', 's32', 's38', 's54', 's70'])
-        df.to_csv(r'C:/users/imran/documents/dicttoxl.csv', index=False) # save CSV to your computer
-        heatmap_df = pd.read_csv(r'C:/users/imran/documents/dicttoxl.csv')
+    except Exception:
+        if UserExit:
+            pass
 
-        heatmap = GenerateHeatMap(df=heatmap_df)
-        plt.show()  # shows the heatmap
+
+
 
 
 
